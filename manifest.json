@@ -1,0 +1,23 @@
+[
+  {
+    "guid": "c1d2e3f4-a5b6-47c8-9d0e-1f2a3b4c5d60",
+    "name": "JellyPlug Cache Headers",
+    "description": "Adds ETag + Cache-Control to /Branding/Css and /JavaScriptInjector/public.js so repeat loads revalidate cheaply (304) instead of refetching ~800 KB in full.",
+    "overview": "Makes JellyPlug's heavy CSS/JS assets cacheable so the app loads fast on reload.",
+    "owner": "JellyPlug",
+    "category": "General",
+    "imageUrl": "",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "1.0.0.0 (JEL-659): stamp ETag + Cache-Control on the two uncached JellyPlug assets and answer conditional GETs with 304.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/jellyplug-cache-headers_1.0.0.0.zip",
+        "checksum": "8e889fb8bc02c685b4f49e9786d41bea",
+        "timestamp": "2026-07-05T04:15:57Z",
+        "repositoryName": "JellyPlug",
+        "repositoryUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/manifest.json"
+      }
+    ]
+  }
+]
