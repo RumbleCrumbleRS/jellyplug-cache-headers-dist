@@ -74,8 +74,10 @@ public class CacheHeaderMiddleware
         byte[] identity = buffer.GetBuffer();
         int identityLength = (int)buffer.Length;
 
+        // Zero-length 200s still get the caching headers (private.js is empty when no
+        // script requires authentication) — otherwise the TV revalidates it every boot.
         bool alreadyEncoded = !string.IsNullOrEmpty(context.Response.Headers[HeaderNames.ContentEncoding].ToString());
-        if (context.Response.StatusCode != StatusCodes.Status200OK || identityLength == 0 || alreadyEncoded)
+        if (context.Response.StatusCode != StatusCodes.Status200OK || alreadyEncoded)
         {
             await originalBody.WriteAsync(identity.AsMemory(0, identityLength)).ConfigureAwait(false);
             return;

@@ -9,12 +9,12 @@
     "imageUrl": "",
     "versions": [
       {
-        "version": "1.1.0.0",
-        "changelog": "1.1.0.0 (JELA-76): ?v=-busted /JavaScriptInjector/*.js now max-age=604800 immutable; /Branding/Css public, max-age=3600 + ETag (URL has no cache-buster in jellyfin-web); middleware now compresses itself (brotli q11 / gzip 9, cached per content version) instead of the server's Fastest-level on-the-fly compression.",
+        "version": "1.1.1.0",
+        "changelog": "1.1.1.0 (JELA-76): ?v=-busted /JavaScriptInjector/*.js now max-age=604800 immutable (incl. empty private.js); /Branding/Css public, max-age=3600 + ETag (URL has no cache-buster in jellyfin-web); middleware compresses itself (brotli q11 / gzip 9, cached per content version) instead of the server's Fastest-level on-the-fly compression.",
         "targetAbi": "10.11.0.0",
-        "sourceUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/jellyplug-cache-headers_1.1.0.0.zip",
-        "checksum": "57c5b4a647136666dbafdb9c3826f09c",
-        "timestamp": "2026-07-14T21:13:21Z",
+        "sourceUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/jellyplug-cache-headers_1.1.1.0.zip",
+        "checksum": "c11f908f78afd5921ed1e015587abe78",
+        "timestamp": "2026-07-14T21:19:25Z",
         "repositoryName": "JellyPlug",
         "repositoryUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/manifest.json"
       },
