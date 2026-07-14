@@ -2,12 +2,22 @@
   {
     "guid": "c1d2e3f4-a5b6-47c8-9d0e-1f2a3b4c5d60",
     "name": "JellyPlug Cache Headers",
-    "description": "Adds ETag + Cache-Control to /Branding/Css and /JavaScriptInjector/public.js so repeat loads revalidate cheaply (304) instead of refetching ~800 KB in full.",
+    "description": "Long-lived Cache-Control on the version-busted /JavaScriptInjector/*.js, 1h + ETag on /Branding/Css, and high-quality brotli/gzip so wire size beats the server's on-the-fly compression.",
     "overview": "Makes JellyPlug's heavy CSS/JS assets cacheable so the app loads fast on reload.",
     "owner": "JellyPlug",
     "category": "General",
     "imageUrl": "",
     "versions": [
+      {
+        "version": "1.1.0.0",
+        "changelog": "1.1.0.0 (JELA-76): ?v=-busted /JavaScriptInjector/*.js now max-age=604800 immutable; /Branding/Css public, max-age=3600 + ETag (URL has no cache-buster in jellyfin-web); middleware now compresses itself (brotli q11 / gzip 9, cached per content version) instead of the server's Fastest-level on-the-fly compression.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/jellyplug-cache-headers_1.1.0.0.zip",
+        "checksum": "57c5b4a647136666dbafdb9c3826f09c",
+        "timestamp": "2026-07-14T21:13:21Z",
+        "repositoryName": "JellyPlug",
+        "repositoryUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/manifest.json"
+      },
       {
         "version": "1.0.0.0",
         "changelog": "1.0.0.0 (JEL-659): stamp ETag + Cache-Control on the two uncached JellyPlug assets and answer conditional GETs with 304.",
