@@ -56,6 +56,16 @@ public class CacheHeaderMiddleware
         "main\\.jellyfin\\.bundle\\.js\\?([0-9a-fA-F]{8,64})",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+    // webpack emits its lazy chunks with the content hash IN THE FILENAME
+    // ("56213.a6cde3c8ba80d7030952.chunk.js", "MaterialIcons-Regular.<hash>.woff2")
+    // and the runtime requests them with NO query string at all, so the build-hash
+    // query rule below can never see them (JELA-722: 49 of 81 /web/ assets). A
+    // [contenthash:20] segment addresses the bytes by construction — if the bytes
+    // change the filename changes — so these are immutable regardless of the query.
+    private static readonly Regex s_contentHashedFilePattern = new Regex(
+        "\\.[0-9a-f]{20}\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)?$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     private readonly RequestDelegate m_next;
 
     private readonly ILogger<CacheHeaderMiddleware> m_logger;
@@ -187,16 +197,35 @@ public class CacheHeaderMiddleware
             return true;
         }
 
-        // jellyfin-web bundles: /web/<name>?<compilation hash>. The hash is a bare
-        // hex query — those bytes cannot change without the URL changing, but only
-        // when the hash is the one the CURRENT build mints. A stale hash (a client
-        // still holding an older index.html) does NOT address the bytes the server
-        // would return today, so it gets revalidate-only — an immutable there would
-        // outlive the mistake. .html is never matched: index.html is where a new
-        // build hash is discovered and must keep the server's no-cache.
-        if (value.StartsWith(WebPrefix, StringComparison.OrdinalIgnoreCase)
-            && !value.EndsWith(".html", StringComparison.OrdinalIgnoreCase)
-            && TryGetBareHexQuery(request.QueryString.Value, out string requestHash))
+        // .html is never matched: index.html is where a new build hash is discovered
+        // and must keep the server's no-cache.
+        if (!value.StartsWith(WebPrefix, StringComparison.OrdinalIgnoreCase)
+            || value.EndsWith(".html", StringComparison.OrdinalIgnoreCase))
+        {
+            cacheControl = string.Empty;
+            return false;
+        }
+
+        // Content-hashed filename: safe by construction, and safe with ANY query
+        // (or none) — the bytes are addressed by the name, not by the cache-buster.
+        if (IsContentHashedWebFile(value))
+        {
+            cacheControl = VersionedPublicCacheControl;
+            vary = VaryAcceptEncodingOrigin;
+            return true;
+        }
+
+        // Everything else under /web/ is a stable filename (runtime.bundle.js,
+        // blurhash.worker.bundle.js, themes/dark/theme.css, config.json): the bytes
+        // behind the URL DO change when jellyfin-web is upgraded, so the only thing
+        // that can make it immutable is a cache-buster, and only when that buster is
+        // the hash the CURRENT build mints. A stale hash (a client still holding an
+        // older index.html) does NOT address the bytes the server would return today,
+        // so it gets revalidate-only — an immutable there would outlive the mistake.
+        // A bare URL falls through untouched: pinning e.g. blurhash.worker.bundle.js
+        // for 7 days would strand the fleet on a stale worker after a server upgrade
+        // (same trap as the bare babel.min.js url in the shell plugin).
+        if (TryGetBareHexQuery(request.QueryString.Value, out string requestHash))
         {
             string? currentHash = GetCurrentWebBuildHash();
             cacheControl = currentHash is not null
@@ -209,6 +238,19 @@ public class CacheHeaderMiddleware
 
         cacheControl = string.Empty;
         return false;
+    }
+
+    /// <summary>
+    /// True when the LAST path segment carries a webpack [contenthash:20] segment,
+    /// e.g. "/web/56213.a6cde3c8ba80d7030952.chunk.js", "/web/home.193c6fa7a64e52078d35.css",
+    /// "/web/MaterialIcons-Regular.2d8017489da689caedc1.woff2". Only the filename is
+    /// tested so a hashed directory name can never promote an unhashed file inside it.
+    /// </summary>
+    public static bool IsContentHashedWebFile(string path)
+    {
+        int slash = path.LastIndexOf('/');
+        string fileName = slash < 0 ? path : path.Substring(slash + 1);
+        return s_contentHashedFilePattern.IsMatch(fileName);
     }
 
     public static bool TryGetBareHexQuery(string? queryString, out string hash)

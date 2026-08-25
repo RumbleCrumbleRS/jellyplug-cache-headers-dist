@@ -9,6 +9,16 @@
     "imageUrl": "",
     "versions": [
       {
+        "version": "1.2.1.0",
+        "changelog": "1.2.1.0 (JELA-722): immutable now also applies to /web/ assets with a webpack [contenthash:20] in the FILENAME (<n>.<hash>.chunk.js, *.<hash>.css, MaterialIcons-Regular.<hash>.woff2) at any query, including none \u2014 the runtime fetches those with no cache-buster so the 1.2.0.0 build-hash-query rule never matched them (49 of 81 /web/ assets, 415 KiB, uncached). Bare stable URLs (runtime.bundle.js, blurhash.worker.bundle.js, themes/dark/theme.css, config.json) and .html stay excluded.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/jellyplug-cache-headers_1.2.1.0.zip",
+        "checksum": "c173c873ebcd4d26346df7810b01ed4c",
+        "timestamp": "2026-08-25T06:20:00Z",
+        "repositoryName": "JellyPlug",
+        "repositoryUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/manifest.json"
+      },
+      {
         "version": "1.2.0.0",
         "changelog": "1.2.0.0 (JELA-714): build-hashed /web/* bundles (bare hex query) now public, max-age=604800, immutable when the query equals the CURRENT build hash read from <web>/index.html, else public, max-age=0, must-revalidate; strong SHA-256 ETag with self-answered 304s (conditional headers stripped downstream so the static handler cannot 304 header-less); Vary: Accept-Encoding, Origin on /web/ (M63 cache-mode collision); .html never matched \u2014 index.html keeps no-cache.",
         "targetAbi": "10.11.0.0",
