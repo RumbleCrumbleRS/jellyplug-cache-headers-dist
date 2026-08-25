@@ -2,12 +2,22 @@
   {
     "guid": "c1d2e3f4-a5b6-47c8-9d0e-1f2a3b4c5d60",
     "name": "JellyPlug Cache Headers",
-    "description": "Long-lived Cache-Control on the version-busted /JavaScriptInjector/*.js, 1h + ETag on /Branding/Css, and high-quality brotli/gzip so wire size beats the server's on-the-fly compression.",
+    "description": "Long-lived Cache-Control on the version-busted /JavaScriptInjector/*.js and the build-hashed /web/* bundles, 1h + ETag on /Branding/Css, and high-quality brotli/gzip so wire size beats the server's on-the-fly compression.",
     "overview": "Makes JellyPlug's heavy CSS/JS assets cacheable so the app loads fast on reload.",
     "owner": "JellyPlug",
     "category": "General",
     "imageUrl": "",
     "versions": [
+      {
+        "version": "1.2.0.0",
+        "changelog": "1.2.0.0 (JELA-714): build-hashed /web/* bundles (bare hex query) now public, max-age=604800, immutable when the query equals the CURRENT build hash read from <web>/index.html, else public, max-age=0, must-revalidate; strong SHA-256 ETag with self-answered 304s (conditional headers stripped downstream so the static handler cannot 304 header-less); Vary: Accept-Encoding, Origin on /web/ (M63 cache-mode collision); .html never matched \u2014 index.html keeps no-cache.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/jellyplug-cache-headers_1.2.0.0.zip",
+        "checksum": "9e95bba2de7ca74b95a4ada38ef1dc6c",
+        "timestamp": "2026-08-25T04:59:31Z",
+        "repositoryName": "JellyPlug",
+        "repositoryUrl": "https://raw.githubusercontent.com/RumbleCrumbleRS/jellyplug-cache-headers-dist/main/manifest.json"
+      },
       {
         "version": "1.1.1.0",
         "changelog": "1.1.1.0 (JELA-76): ?v=-busted /JavaScriptInjector/*.js now max-age=604800 immutable (incl. empty private.js); /Branding/Css public, max-age=3600 + ETag (URL has no cache-buster in jellyfin-web); middleware compresses itself (brotli q11 / gzip 9, cached per content version) instead of the server's Fastest-level on-the-fly compression.",
